@@ -1,0 +1,232 @@
+﻿@using System.Globalization;
+
+@{
+    ViewData["Title"] = "Home Page";
+    // Displaying each account info could be cleaner and drier.
+}
+
+<html>
+<head>
+    <title>Accounts Coding Test</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            font-family: Roboto, Helvetica, Arial, sans-serif
+        }
+
+        #wrapper {
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-areas:
+                "header"
+                "main"
+                "footer";
+            grid-template-rows: 100px auto 50px;
+        }
+
+            #wrapper > header {
+                grid-area: header;
+            }
+
+            #wrapper > main {
+                grid-area: main;
+            }
+
+            #wrapper > footer {
+                grid-area: footer;
+            }
+
+        header {
+            background-color: #006643;
+            color: #fff;
+            height: 75px;
+            display: grid;
+            align-content: center;
+            justify-content: left;
+            padding: 0 25px;
+        }
+
+        main {
+            display: grid;
+            padding: 25px;
+        }
+
+        h1 {
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        h2 {
+            font-size: 2em;
+            color: #006643;
+        }
+
+        h3 {
+            display: block;
+            font-size: 1.5em;
+            color: #006643;
+        }
+
+        ul {
+            padding: 5px 0;
+        }
+
+        footer {
+            display: grid;
+            background-color: #006643;
+            color: #fff;
+            grid-template-columns: 1% 98% 1%;
+            grid-template-rows: 5% 90% 5%;
+        }
+
+        #account-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .content-title-container {
+            display: grid;
+            align-content: top;
+            justify-content: center;
+            height: 5em;
+        }
+
+        .account-container-title {
+            height: 3em;
+        }
+
+        .account-column, .account-container {
+            display: grid;
+            align-content: top;
+            align-self: top;
+            justify-content: center;
+        }
+
+        .account-column {
+            grid-template-rows: 3em auto 3em;
+        }
+
+        #overdue-account-container-title > h3 {
+            color: #B22222;
+        }
+
+        #inactive-account-container-title > h3 {
+            color: #808080;
+        }
+
+        .account-data-list {
+            list-style: none;
+        }
+
+            .account-data-list > li {
+                margin: 10px 0;
+            }
+
+                .account-data-list > li > label {
+                    font-weight: bold;
+                    margin: 0 5px 0 0;
+                }
+
+        .copy {
+            place-self: end;
+            grid-row-start: 2;
+            grid-column-start: 2;
+        }
+    </style>
+</head>
+<body>
+    <section id="wrapper">
+        <header>
+            <div class="title-container">
+                <h1>Coding Test</h1>
+            </div>
+        </header>
+        @model List<Account>;
+        <main class="content" id="home-content">
+            <div class="content-title-container">
+                <h2>Accounts</h2>
+            </div>
+            <section id="account-grid">
+                <section class="account-column" id="active-account-column">
+                    <div class="account-container-title" id="active-account-container-title">
+                        <h3>Active</h3>
+                    </div>
+
+                    <div class="account-container active-account">
+                        @foreach (Account account in Model.Where(a => a.AccountStatusId == 0))
+                        {
+                            <ul class="account-data-list">
+                                <li><label>Name:</label>@account.LastName, @account.FirstName</li>
+                                <li><label>Email:</label>@account.Email</li>
+                                <li><label>Phone Number:</label>@account.PhoneNumber</li>
+                                @if (account.AmountDue != null)
+                                {
+                                    <li><label>Amount Due:</label>@account.AmountDue?.ToString("C", CultureInfo.CurrentCulture)</li>
+                                }
+                                @if (account.PaymentDueDate != null)
+                                {
+                                    <li><label>Due Date:</label>@account.PaymentDueDate?.ToString("M-d-yyyy")</li>
+                                }
+                            </ul>
+                        }
+                    </div>
+
+                </section>
+                <section class="account-column" id="overdue-account-column">
+                    <div class="account-container-title" id="overdue-account-container-title">
+                        <h3>Overdue</h3>
+                    </div>
+
+                    <div class="account-container overdue-account">
+                        @foreach (Account account in Model.Where(a => a.AccountStatusId == 2))
+                        {
+                            <ul class="account-data-list">
+                                <li><label>Name:</label>@account.LastName, @account.FirstName</li>
+                                <li><label>Email:</label>@account.Email</li>
+                                <li><label>Phone Number:</label>@account.PhoneNumber</li>
+                                <li><label>Amount Due:</label>@account.AmountDue?.ToString("C", CultureInfo.CurrentCulture)</li>
+                                @if (account.PaymentDueDate != null)
+                                {
+                                    <li><label>Due Date:</label>@account.PaymentDueDate?.ToString("M-d-yyyy")</li>
+                                }
+                            </ul>
+                        }
+                    </div>
+
+                </section>
+                <div class="account-column" id="inactive-account-column">
+                    <div class="account-container-title" id="inactive-account-container-title">
+                        <h3>Inactive</h3>
+                    </div>
+
+                    <div class="account-container inactive-account">
+                        @foreach (Account account in Model.Where(a => a.AccountStatusId == 1))
+                        {
+                            <ul class="account-data-list">
+                                <li><label>Name:</label>@account.LastName, @account.FirstName</li>
+                                <li><label>Email:</label>@account.Email</li>
+                                <li><label>Phone Number:</label>@account.PhoneNumber</li>
+                                <li><label>Amount Due:</label>@account.AmountDue?.ToString("$00.00")</li>
+                                @if (account.PaymentDueDate != null)
+                                {
+                                    <li><label>Due Date:</label>@account.PaymentDueDate?.ToString("M-d-yyyy")</li>
+                                }
+                            </ul>
+                        }
+                    </div>
+
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p class="copy">
+                &copy;
+                <script>document.write(new Date().getFullYear())</script>
+            </p>
+        </footer>
+    </section>
+</body>
+</html>
